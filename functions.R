@@ -15,7 +15,7 @@ printFigure <- local({
 
     path <- file.path(
       figure_dir,
-      sprintf("asis-plot-%03d.png", plot_number)
+      sprintf("asis-plot-%03d.png", plotNumber)
     )
 
     ggplot2::ggsave(
@@ -39,29 +39,29 @@ printFigure <- local({
   }
 })
 captionTable <- function(title) {
-  text <- paste0(
+  text <- paste(
     ':::{custom-style="TableCaption"}',
     title,
-    ':::',
-    collapse = "\n\n"
+    ':::\n\n',
+    sep = "\n\n"
   )
   cat(text)
 }
 captionFigure <- function(title) {
-  text <- paste0(
+  text <- paste(
     ':::{custom-style="FigureCaption"}',
     title,
-    ':::',
-    collapse = "\n\n"
+    ':::\n\n',
+    sep = "\n\n"
   )
   cat(text)
 }
 footer <- function(footer) {
-  text <- paste0(
+  text <- paste(
     ':::{custom-style="CaptionFooter"}',
     footer,
-    ':::',
-    collapse = "\n\n"
+    ':::\n\n',
+    sep = "\n\n"
   )
   cat(text)
 }
