@@ -182,9 +182,9 @@ resultsPrevalence |>
   )
 ```
 
-Note that for this prevalence table we had to explicitly state the style and type, this is not needed for the rest of the packages as they automatically detect the style and type from global options. In the future (hopefully) this will be implemented and you won't need to manually state the style and type.
+For this prevalence table, we must explicitly specify `style` and `type`. This is not required for the other packages because they automatically detect these settings from the global options. In the future, `tablePrevalence()` may also support this behaviour.
 
-Now we want to add a caption to this table to do so we can use the predefined style template, see the example below:
+We can add a caption to the table using a custom style defined in the Word reference document, as shown below:
 
 :::{custom-style="TableCaption"}
 Table 1. This is the title for table 1.
@@ -297,47 +297,40 @@ for (sec in sections) {
 
 When you generalise the code, several edge cases will arise: sections containing only one condition, conditions with only males in the denominator, conditions that are absent from a database, and counts below five. Consider how your code should handle each case without failing or producing misleading text.
 
-## Spacing in quarto
+## Spacing in Quarto
 
-Probably
-you
-have
-noticed
-that adding just one
-line break
-does
-not add the line break in the rendered document. If you want to 
-create a new line you need
+You may have noticed that a single newline in the source does not create a line break in the rendered document. Markdown treats consecutive lines as part of the same paragraph.
 
-two line breaks.
+To start a new paragraph, leave a blank line between blocks of text.
 
-Also you can add `{{< pagebreak >}}` if you want to add
+You can also insert a page break using `{{< pagebreak >}}`:
 
 {{< pagebreak >}}
 
-a page break. As you can see multiple line
+Adding several blank lines does not create extra vertical space: one or more blank lines simply separate paragraphs.
 
 
 
 
 
 
-breaks do not add extra line breaks (e.g. space/1 line break -> space; 2 or more line breaks -> 1 line break).
+If you want to force a line break without starting a new paragraph, end the line with `\`, as shown below.
 
-If you explicitly want to add a line break you must use `\` see example:
+This is the first line. \
+This starts a new line within the same paragraph.
 
-\
+If you want to add a visually empty line, place `&nbsp;` on its own line. Unlike additional blank lines in the source, it creates a paragraph containing a non-breaking space, which is preserved in the rendered document. The empty line before the next section is created in this way.
 
-This adds an extra line break.
+&nbsp;
 
 ## Change the style
 
-- The style of tables and figures is controlled by the `_brand.yml` file change the darwin blue definition to: '#AF2F3E' or change the white lines into black or play with it. Regenerate the document so you can check that the changes have been applied properly. 
+- Table and figure styling is controlled by `_brand.yml`. Try changing the `darwin_blue` colour to `'#AF2F3E'`, changing the white lines to black, or experimenting with another setting. Regenerate the document to confirm that your changes have been applied.
 
-- The style of captions and text is controlled by the `data/template.docx` see on the styles part that *TableCaption*, *FigureCaption*, *CaptionFooter* have been defined. Play with them and add for example bold to the FigureCaption or change the colour or whatever you like. Regenerate the document so you see that the changes have been affected.
+- Caption and text styling is controlled by `data/template.docx`. In the Word styles pane, you will find the custom styles *TableCaption*, *FigureCaption*, and *CaptionFooter*. Try making *FigureCaption* bold or changing its colour, then regenerate the document to confirm that the changes have taken effect.
 
-- Use the functions that you defined before to define the number of decimals used to display a percentage.
+- Use the formatting functions defined earlier to control the number of decimal places displayed for percentages.
 
-- Change the number of decimals used in the tables, you can control that using the `options` argument.
+- Use the `options` argument to control the number of decimal places displayed in tables.
 
-- For titles of different levels use '#' the more that you use will determine which is the level of the style used: e.g. if you use #### (4 hashtags) this will match the Heading 4 style.
+- Use `#` characters to create headings. The number of characters determines the heading level; for example, `####` creates a level-four heading and uses the *Heading 4* style from the Word reference document.
