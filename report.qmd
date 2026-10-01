@@ -1,30 +1,42 @@
 ---
-title: ""
+title: "My report"
 format:
   docx:
     fig-cap-location: top
+    reference-doc: data/template.docx
 execute:
-  echo: false
-  message: false
-  warning: false
+  echo: false # R code is not printed
+  message: false # R messages are not printed
+  warning: false # R warning messages are not printed
 lof: true
 ---
 
-```{r}
-# Load necessary packages ----
-library(visOmopResults)
+```{r, eval=FALSE}
+# make sure you have the latest version of the packages
+#install.packages("pak")
+pak::pkg_install(c("visOmopResults", "omopgenerics", "IncidencePrevalence", "CohortCharacteristics"))
+```
 
-# Load results stored in the package ----
-fileData <- file.path(getwd(), "data", "studyData.RData")
-if (!file.exists(fileData)) {
-  source(file.path(getwd(), "rawData", "preprocess.R"))
+```{r}
+# Check needed packages ----
+if (packageVersion("visOmopResults") < "1.5.1") {
+  stop("visOmopResults >= 1.5.1 is required")
+}
+if (packageVersion("omopgenerics") < "1.4.2") {
+  stop("omopgenerics >= 1.4.2 is required")
 }
 
-# uncomment to load the raw data
-# rawData <- omopgenerics::importSummarisedResult(file.path(getwd(), "rawData"))
+# Load necessary packages ----
+library(visOmopResults)
+library(here)
+library(readr)
+library(omopgenerics)
+library(dplyr)
+library(IncidencePrevalence)
+library(CohortCharacteristics)
 
-# load data
-load(fileData)
+# Load results ----
+results <- importSummarisedResult(path = here("rawData"))
 
 # source functions
 source(file.path(getwd(), "functions.R"))
@@ -39,12 +51,197 @@ knitr::opts_chunk$set(
   results    = "asis"  # enable Markdown produced via cat() inside chunks
 )
 
-setGlobalPlotOptions(type = "ggplot")
-setGlobalTableOptions(type = "flextable")
-
-# Calibri font in ggplot figures (requires the extrafont package to be available)
-# Read vignette on styles to learn more
-requireExtrafont()
+setGlobalPlotOptions(type = "ggplot") # the best configuration for word documents
+setGlobalTableOptions(type = "flextable") # the best configuration for word documents
 ```
 
+```{r}
+# read the new names and sections for the report
+dic <- read_csv("data/dictionary.csv", show_col_types = FALSE)
+```
 
+```{r}
+# you can define some functions here so you can reuse them
+formatCount <- function(x) {
+  format(round(x), big.mark = ",")
+}
+formatPercentage <- function(x, n = 2) { # by default formated to 2 decimals
+  sprintf(paste0("%.", n, "f%%"), x)
+}
+```
+
+Let's first process the data to change the names of the cohorts to the provided results. In the characterisation results the cohort name is stored in group (cohort_name) whereas for the prevalence results the names are stored in group (outcome_cohort_name) the first thing we will do is to split the results into prevalence and characterisation and then change the results.
+
+```{r}
+resultsCharacterisation <- results |>
+  filterResult(result_type == "summarise_characteristics") |>
+  splitGroup() |>
+  left_join(
+    dic |>
+      select("cohort_name" = "original_name", "new" = "report_name"),
+    by = c("cohort_name")
+  ) |>
+  select(!"cohort_name") |>
+  rename("cohort_name" = "new") |>
+  uniteGroup(cols = "cohort_name") |>
+  newSummarisedResult()
+
+resultsPrevalence <- results |>
+  filterResult(result_type == "prevalence") |>
+  splitGroup() |>
+  left_join(
+    dic |>
+      select("outcome_cohort_name" = "original_name", "new" = "report_name"),
+    by = c("outcome_cohort_name")
+  ) |>
+  select(!"outcome_cohort_name") |>
+  rename("outcome_cohort_name" = "new") |>
+  uniteGroup(cols = c("denominator_cohort_name", "outcome_cohort_name")) |>
+  newSummarisedResult()
+```
+
+Does the code make sense?
+
+In this first block of exercises we will work only with the neurological conditions.
+
+```{r}
+neuroCond <- dic |>
+  filter(section == "Neurological conditions") |>
+  pull("report_name")
+```
+
+You can use the variable that we have just created to print the neurological conditions programmatically. There are `r length(neuroCond)` neurological conditions, they are: `r neuroCond`.
+
+## Simple paragraph
+
+Let's try to make our PI happy we have agreed that we want to include the following text:
+
+The total number of individuals under observation was XXX.
+
+The neurological condition with the highest prevalence was XXX, with a prevalence of XX% (95% CI: XX–XX%), while the condition with the lowest prevalence was XXXX, with a prevalence of XX% (95% CI: XX–XX%).
+
+The median age at diagnosis ranged from XX years (IQR: XX–XX) for XXXX condition to XX years (IQR: XX–XX) for XXXX condition.
+
+The proportion of females ranged from XX% in XXXX condition to XX% in XXXX condition.
+
+When generating the text programmatically, consider:
+
+- How many decimal places should be reported? You can use/define functions in the block that we created above.
+- What should happen when two or more conditions have the same minimum or maximum value?
+- How should conditions with no observed cases be handled?
+
+To start with do this with only database 1:
+
+```{r}
+xc <- resultsCharacterisation |>
+  filterResult(
+    cohort_name %in% neuroCond,
+    cdm_name == "Database 1",
+    variable_name %in% c("Age", "Sex"),
+    estimate_name %in% c("q25", "median", "q75", "percentage")
+  ) |>
+  tidy()
+xp <- resultsPrevalence |>
+  mutate(variable_name = "prevalence") |>
+  filterResult(
+    outcome_cohort_name %in% neuroCond,
+    cdm_name == "Database 1"
+  ) |>
+  tidy() |>
+  select(
+    "cdm_name", "outcome_cohort_name", "variable_name", "outcome_count", 
+    "denominator_count", "prevalence", "prevalence_95CI_lower",
+    "prevalence_95CI_upper"
+  )
+```
+
+To help you get started you the first sentence could be done like:
+
+```{r}
+numObs <- unique(xp$denominator_count)
+```
+
+The total number of individuals under observation was `r formatCount(numObs)`.
+
+...
+
+
+## Simple Table
+
+Now we will do a table to show the prevalence of the different conditions of interest in the different databases use `tablePrevalence()` after filtering to the conditions of interest. Populate the arguments of tablePrevalence so the table looks nice.
+
+```{r}
+resultsPrevalence |>
+  filterResult() |> # populate the filter accordingly
+  tablePrevalence( # populate header, groupColumn, hide to make the table as you wish
+    type = "flextable",
+    style = "_brand.yml"
+  )
+```
+
+Note that for this prevalence table we had to explicitly state the style, this is not needed for the rest of the packages as they automatically detect the style. Now we want to add a caption to this table to do so we can use the predefined style template, see the example below:
+
+:::{custom-style="TableCaption"}
+Table 1. This is the title for table 1.
+:::
+
+```{r}
+emptyTable()
+```
+
+:::{custom-style="CaptionFooter"}
+IQR = interquartile range
+:::
+
+Use this example to create your own table with caption.
+
+## Simple Figure
+
+## Loop of Paragraphs
+
+## Loop of Tables
+
+## Loop of Figures
+
+## Spacing in quarto
+
+Probably
+you
+have
+noticed
+that adding just one
+line break
+does
+not add the line break in the rendered document. If you want to 
+create a new line you need
+
+two line breaks.
+
+Also you can add `{{< pagebreak >}}` if you want to add
+
+{{< pagebreak >}}
+
+a page break. As you can see multiple line
+
+
+
+
+
+
+breaks do not add extra line breaks (e.g. space/1 line break -> space; 2 or more line breaks -> 1 line break).
+
+If you explicitly want to add a line break you must use `\` see example:
+
+\
+
+This added two line breaks.
+
+## Change the style
+
+- The style of tables and figures is controlled by the `_brand.yml` file change the darwin blue definition to: '#AF2F3E' or change the white lines into black or play with it. Regenerate the document so you can check that the changes have been applied properly. 
+
+- The style of captions and text is controlled by the `data/template.docx` see on the styles part that *TableCaption*, *FigureCaption*, *CaptionFooter* have been defined. Play with them and add for example bold to the FigureCaption or change the colour or whatever you like. Regenerate the document so you see that the changes have been affected.
+
+- Use the functions that you defined before to define the number of decimals used to display a percentage.
+
+- Change the number of decimals used in the tables, you can control that using the `options` argument.

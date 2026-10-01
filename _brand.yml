@@ -5,9 +5,6 @@ color:
   foreground: black
   background: '#ffffff'
   primary: '#003399'
-logo:
-  path: darwin
-  alt: ~
 typography:
   base:
     family: Calibri
@@ -85,4 +82,3 @@ defaults:
       body:
         border_width: 0.5
         border_color: darwin_blue
-path: /Users/martics/Library/R/arm64/4.4/library/visOmopResults/brand/darwin.yml
