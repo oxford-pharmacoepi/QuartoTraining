@@ -13,7 +13,10 @@ execute:
 ```{r, eval=FALSE}
 # make sure you have the latest version of the packages
 #install.packages("pak")
-pak::pkg_install(c("visOmopResults", "omopgenerics", "IncidencePrevalence", "CohortCharacteristics"))
+pak::pkg_install(c(
+  "visOmopResults", "omopgenerics", "IncidencePrevalence",
+  "CohortCharacteristics", "here", "readr", "dplyr"
+))
 ```
 
 ```{r}
@@ -69,7 +72,7 @@ formatPercentage <- function(x, n = 2) { # by default formated to 2 decimals
 }
 ```
 
-Let's first process the data to change the names of the cohorts to the provided results. In the characterisation results the cohort name is stored in group (cohort_name) whereas for the prevalence results the names are stored in group (outcome_cohort_name) the first thing we will do is to split the results into prevalence and characterisation and then change the results.
+First, we will update the cohort names using the supplied dictionary. In the characterisation results, the cohort name is stored in the group field `cohort_name`, whereas in the prevalence results it is stored in `outcome_cohort_name`. We will therefore split the results into characterisation and prevalence results before renaming the cohorts.
 
 ```{r}
 resultsCharacterisation <- results |>
@@ -109,11 +112,11 @@ neuroCond <- dic |>
   pull("report_name")
 ```
 
-You can use the variable that we have just created to print the neurological conditions programmatically. There are `r length(neuroCond)` neurological conditions, they are: `r neuroCond`.
+You can use the variable that we have just created to print the neurological conditions programmatically. There are `r length(neuroCond)` neurological conditions: `r neuroCond`.
 
 ## Simple paragraph
 
-Let's try to make our PI happy we have agreed that we want to include the following text:
+Let's make our PI happy. We have agreed to include the following text:
 
 The total number of individuals under observation was XXX.
 
@@ -126,6 +129,7 @@ The proportion of females ranged from XX% in XXXX condition to XX% in XXXX condi
 When generating the text programmatically, consider:
 
 - How many decimal places should be reported? You can use/define functions in the block that we created above.
+- Prevalence and its confidence limits are stored as proportions (for example, `0.0431`), so multiply them by 100 before passing them to `formatPercentage()` to report `4.31%`.
 - What should happen when two or more conditions have the same minimum or maximum value?
 - How should conditions with no observed cases be handled?
 
@@ -154,7 +158,7 @@ xp <- resultsPrevalence |>
   )
 ```
 
-To help you get started you the first sentence could be done like:
+To help you get started, the first sentence could be produced like this:
 
 ```{r}
 numObs <- unique(xp$denominator_count)
@@ -167,7 +171,7 @@ The total number of individuals under observation was `r formatCount(numObs)`.
 
 ## Simple Table
 
-Now we will do a table to show the prevalence of the different conditions of interest in the different databases use `tablePrevalence()` after filtering to the conditions of interest. Populate the arguments of tablePrevalence so the table looks nice.
+Now we will create a table showing the prevalence of the conditions of interest in each database. First filter to the relevant conditions, then use `tablePrevalence()`. Populate its arguments so that the table is clear and easy to read.
 
 ```{r}
 resultsPrevalence |>
@@ -198,7 +202,7 @@ Use this example to create your own table with caption.
 
 ## Simple Figure
 
-Similarly you can create a figure plot the Prevalence of the different conditions of interest (the same than before) using the plotPrevalence function, customise the plot so it looks as you wish.
+Similarly, create a figure showing the prevalence of the same conditions of interest using `plotPrevalence()`. Customise the plot so that it is clear and easy to read.
 
 ```{r}
 resultsPrevalence |>
@@ -209,7 +213,9 @@ resultsPrevalence |>
 
 ## Loop of Sections
 
-Now it would be nice to repeat the paragraph, the figure and the table that you created in a loop for all the different sections. When you have multiple outputs the "game" changes a bit. The first thing that you need to know is that you must use the option results = "asis" in the configuration of the r chunk. You will also need to use helper functions that have been defined in `functions.R`.
+Now we will repeat the paragraph, figure, and table in a loop for every section. Producing multiple outputs inside a loop requires a slightly different approach. First, set the chunk option `results = "asis"` so that text generated with `cat()` is interpreted as Markdown. You will also need the helper functions defined in `functions.R`.
+
+Objects returned at the top level of a chunk are printed automatically, but objects created inside a `for` loop are not. Therefore, tables and figures must be printed explicitly. `printTable()` converts and prints each table in a form that knitr can include, while `printFigure()` saves each plot and writes the corresponding image link into the document.
 
 Let's see how it will look:
 
@@ -289,7 +295,7 @@ for (sec in sections) {
 }
 ```
 
-Note that when you try to generalise, several problems will arise, sections that have just one conditions, conditions that only have males in the denominator, conditions that are not present in a certain database, counts under 5, ... This will test you code to the limit, good luck :)
+When you generalise the code, several edge cases will arise: sections containing only one condition, conditions with only males in the denominator, conditions that are absent from a database, and counts below five. Consider how your code should handle each case without failing or producing misleading text.
 
 ## Spacing in quarto
 
@@ -322,7 +328,7 @@ If you explicitly want to add a line break you must use `\` see example:
 
 \
 
-This added two line breaks.
+This adds an extra line break.
 
 ## Change the style
 
