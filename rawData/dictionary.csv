@@ -1,0 +1,55 @@
+original_name,report_name,section
+cancer_colorrectal_anal_5y,Colorectal and anus cancer,Cancers
+cancer_breast_5y,Breast cancer,Cancers
+cancer_prostate_5y,Prostate cancer,Cancers
+cancer_lung_5y,Lung cancer,Cancers
+chronic_viral_hepatitis_narrow_inf,Chronic viral hepatitis,Chronic infectious diseases
+hiv_inf,Human immunodeficiency virus,Chronic infectious diseases
+atrial_fribrillation_inf,Atrial fibrillation,Diseases of the circulatory system
+cardiac_arrythmia_inf,Cardiac arrhythmia,Diseases of the circulatory system
+chd_inf,Coronary heart disease (composite),Diseases of the circulatory system
+cad_nos_inf,"Coronary heart disease, not otherwise specified",Diseases of the circulatory system
+myocardial_infraction_1y,Myocardial infarction,Diseases of the circulatory system
+stable_angina_broad_inf,Stable angina,Diseases of the circulatory system
+unstable_angina_inf,Unstable angina,Diseases of the circulatory system
+heart_failure_inf,Heart failure,Diseases of the circulatory system
+hypertension_wide_inf,Hypertension,Diseases of the circulatory system
+peripheral_arterial_disease_inf,Peripheral arterial disease,Diseases of the circulatory system
+stroke_1y,Stroke (composite),Diseases of the circulatory system
+haemorrhagic_stroke_1y,Haemorrhagic stroke,Diseases of the circulatory system
+ischaemic_stroke_1y,Ischaemic stroke,Diseases of the circulatory system
+tia_1y,Transient ischaemic attack,Diseases of the circulatory system
+non_fatal_mace_1y,Major adverse cardiovascular events (composite),Diseases of the circulatory system
+cholecystitis_1y,Cholecystitis,Diseases of the digestive system
+chronic_liver_disease_broad_inf,Chronic liver disease (excluding chronic viral hepatitis),Diseases of the digestive system
+ibd_inf,Inflammatory bowel disease (composite),Diseases of the digestive system
+chron_disease_inf,Crohn's disease,Diseases of the digestive system
+ulcerative_colitis_broad_inf,Ulcerative colitis,Diseases of the digestive system
+gord_inf,Gastro-oesophageal reflux disease,Diseases of the digestive system
+masld_inf,Metabolic dysfunction-associated steatotic liver disease,Diseases of the digestive system
+hypercholesterolaemia_inf,Hypercholesterolaemia,Diseases of the endocrine system
+dyslipidemia_inf,Dyslipidaemia,Diseases of the endocrine system
+hypothyroidism_inf,Hypothyroidism,Diseases of the endocrine system
+obesity_inf,Obesity,Diseases of the endocrine system
+t1dm_complex_narrow_inf,Type 1 diabetes mellitus,Diseases of the endocrine system
+t2dm_complex_narrow_inf,Type 2 diabetes mellitus,Diseases of the endocrine system
+aki_narrow_1y,Acute kidney injury,Diseases of the genitourinary system
+ckd_inf,Chronic kidney disease,Diseases of the genitourinary system
+prostatic_hyperplasia_inf,Benign prostatic hyperplasia,Diseases of the genitourinary system
+asthma_inf,Asthma,Diseases of the respiratory system
+copd_inf,Chronic obstructive pulmonary disease,Diseases of the respiratory system
+anemia_nutritional_1y,Anaemia (nutritional and metabolic anaemias),Haematological conditions
+alcohol_related_disorders_5y,Alcohol use-related disorders,Mental health disorders
+anxiety_broad_5y,Anxiety disorders,Mental health disorders
+bipolar_disorder_mania_5y,Bipolar affective disorder and mania,Mental health disorders
+depression_5y,Depression,Mental health disorders
+schizo_spectrum_disorders_narrow_5y,"Schizophrenia, schizotypal, and delusional disorders",Mental health disorders
+osteoporosis_inf,Osteoporosis,Musculoskeletal conditions
+reumathoid_arthritis_inf,Rheumatoid arthritis,Musculoskeletal conditions
+alzheimer_inf,Alzheimer's dementia,Neurological conditions
+dementia_narrow_inf,Dementia,Neurological conditions
+epilepsy_broad_inf,Epilepsy,Neurological conditions
+migraine_inf,Migraine,Neurological conditions
+parkinson_disease_inf,Parkinson's disease,Neurological conditions
+acne_5y,Acne,Skin conditions
+atopic_dermatitis_narrow_inf,Atopic dermatitis,Skin conditions
