@@ -207,9 +207,23 @@ Similarly, create a figure showing the prevalence of the same conditions of inte
 ```{r}
 resultsPrevalence |>
   filterResult() |> # populate the filter accordingly
-  plotPrevalence( # populate x, y, colour, facet, ... to make the table as you wish
+  plotPrevalence( # populate x, y, colour, facet, ... to make the figure as you wish
   )
 ```
+
+We can add a caption to the figure using a custom style defined in the Word reference document, as shown below:
+
+```{r}
+emptyPlot()
+```
+
+:::{custom-style="FigureCaption"}
+Figure 1. This is the title for table 1.
+:::
+
+:::{custom-style="CaptionFooter"}
+IQR = interquartile range
+:::
 
 ## Loop of Sections
 
