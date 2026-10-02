@@ -218,11 +218,11 @@ emptyPlot()
 ```
 
 :::{custom-style="FigureCaption"}
-Figure 1. This is the title for table 1.
+Figure 1. This is the title for figure 1.
 :::
 
 :::{custom-style="CaptionFooter"}
-IQR = interquartile range
+CI = confidence interval
 :::
 
 ## Loop of Sections
